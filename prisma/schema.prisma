@@ -1,0 +1,38 @@
+// schema.prisma
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+    directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Product {
+    id        String   @id @default(cuid())
+    name      String
+    fullPrice Int
+    price     Int
+    screen    String
+    capacity  String
+    color     String
+    ram       String
+    year      Int
+    image     String
+    createdAt DateTime @default(now()) @map(name: "created_at")
+    updatedAt DateTime @updatedAt @map(name: "updated_at")
+
+    @@map(name: "products")
+}
+
+// model User {
+//     id        String   @id @default(cuid())
+//     name      String?
+//     email     String?  @unique
+//     createdAt DateTime @default(now()) @map(name: "created_at")
+//     updatedAt DateTime @updatedAt @map(name: "updated_at")
+
+//     @@map(name: "users")
+// }
