@@ -11,28 +11,47 @@ datasource db {
 }
 
 model Product {
-    id        String   @id @default(cuid())
-    name      String
-    fullPrice Int
-    price     Int
-    screen    String
-    capacity  String
-    color     String
-    ram       String
-    year      Int
-    image     String
-    createdAt DateTime @default(now()) @map(name: "created_at")
-    updatedAt DateTime @updatedAt @map(name: "updated_at")
+    id                String   @id @default(cuid())
+    categoryId        String
+    category          Category @relation(fields: [categoryId], references: [id])
+    color             String
+    capacity          String
+    name              String
+    fullPrice         Int
+    price             Int
+    screen            String
+    ram               String
+    year              Int
+    image             String
+    images            String[]
+    colorsAvailable   String[]
+    capacityAvailable String[]
+    description       String
+    resolution        String
+    processor         String
+    cell              String[]
+    createdAt         DateTime @default(now()) @map(name: "created_at")
+    updatedAt         DateTime @updatedAt @map(name: "updated_at")
 
     @@map(name: "products")
 }
 
-// model User {
-//     id        String   @id @default(cuid())
-//     name      String?
-//     email     String?  @unique
-//     createdAt DateTime @default(now()) @map(name: "created_at")
-//     updatedAt DateTime @updatedAt @map(name: "updated_at")
+model Category {
+    id        String    @id @default(cuid())
+    name      String
+    products  Product[]
+    createdAt DateTime  @default(now()) @map(name: "created_at")
+    updatedAt DateTime  @updatedAt @map(name: "updated_at")
 
-//     @@map(name: "users")
-// }
+    @@map(name: "categories")
+}
+
+model User {
+    id        String   @id @default(cuid())
+    name      String?
+    email     String?  @unique
+    createdAt DateTime @default(now()) @map(name: "created_at")
+    updatedAt DateTime @updatedAt @map(name: "updated_at")
+
+    @@map(name: "users")
+}
