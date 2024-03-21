@@ -1,9 +1,5 @@
-import Products from "./components/Products";
+import { redirect } from 'next/navigation';
 
-export default async function Home() {
-  return (
-    <main>
-      <Products />
-    </main>
-  );
+export default function Page(): never {
+  redirect('/dashboard');
 }
