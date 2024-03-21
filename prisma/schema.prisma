@@ -22,7 +22,6 @@ model Product {
     screen            String
     ram               String
     year              Int
-    image             String
     images            String[]
     colorsAvailable   String[]
     capacityAvailable String[]

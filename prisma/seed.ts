@@ -2,6 +2,9 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+export const categories = ['phones', 'tablets', 'accessories'];
+
+
 async function main() {
 
     // for (const category of categories) {
@@ -37,21 +40,19 @@ async function main() {
     //             resolution: details?.resolution || '',
     //             processor: details?.processor || '',
     //             cell: details?.cell || [],
-    //             image: product.image,
     //             images: details?.images || []
     //           }
     //     })
     // }
 
-
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+    .then(async () => {
+        await prisma.$disconnect()
+    })
+    .catch(async (e) => {
+        console.error(e)
+        await prisma.$disconnect()
+        process.exit(1)
+    })
