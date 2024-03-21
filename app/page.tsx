@@ -1,9 +1,6 @@
-
+import { getUserSession } from '@/lib/session'
 
 export default async function Home() {
-  return (
-    <main>
-
-    </main>
-  );
+  const user = await getUserSession()
+  return <main className="">{JSON.stringify(user)}</main>
 }
