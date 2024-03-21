@@ -4,8 +4,6 @@ const prisma = new PrismaClient();
 
 async function main() {
 
-    await prisma.product.deleteMany()
-
     // for (const category of categories) {
     //     await prisma.category.create({
     //         data: {
