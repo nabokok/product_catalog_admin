@@ -45,7 +45,7 @@ export async function DELETE(req: NextRequest, {params}: {params: {productId: st
         if (!existingProduct) {
             return new NextResponse("Product not found", { status: 404 });
         }
-        const deletedProduct = await prisma.product.delete({
+       await prisma.product.delete({
             where: {
                 id: params.productId
             },

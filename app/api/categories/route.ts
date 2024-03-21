@@ -12,15 +12,21 @@ export async function GET() {
     }
 }
 
-export async function POST(request:  NextRequest) {
+export async function POST(req:  NextRequest) {
     try {
-        const body = await request.json();
+        const body = await req.json();
 
         const { name } = body;
 
         if (!name) {
             return new NextResponse("Name is required", { status: 400 });
           }
+
+        const existingCategory = await prisma.category.findFirst({ where: { name } });
+
+        if (existingCategory) {
+              return new NextResponse("Category already exists", { status: 409 });
+        }
     
         const category = await prisma.category.create({
             data: {
