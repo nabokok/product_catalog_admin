@@ -1,13 +1,4 @@
-import prisma from "@/lib/prisma";
-
-export const getProducts = async () => {
-  const products = await prisma.product.findMany();
-  return products;
-};
-
 export default async function Products() {
-  const products = await getProducts();
-  console.log(products);
   return (
     <main>
     Hello
