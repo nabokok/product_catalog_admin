@@ -10,8 +10,6 @@ import { LocalizationProvider } from '@/components/core/localization-provider';
 import { ThemeProvider } from '@/components/core/theme-provider/theme-provider';
 import { Providers } from '@/components/Providers';
 
-
-
 export const viewport = { width: 'device-width', initialScale: 1 } as Viewport;
 
 interface LayoutProps {
