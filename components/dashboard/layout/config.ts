@@ -1,5 +1,5 @@
 import type { NavItemConfig } from '@/types/nav';
-import { paths } from '@/paths';
+import { paths } from '@/constants/paths';
 
 export const navItems = [
   { key: 'products', title: 'Products', href: paths.dashboard.products, icon: 'users' },
