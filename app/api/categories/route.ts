@@ -7,12 +7,12 @@ export async function GET() {
     try {
         const categories = await prisma.category.findMany()
         return NextResponse.json(categories)
-    } catch(error) {
-        return new NextResponse('Internal error', {status: 500})
+    } catch (error) {
+        return new NextResponse('Internal error', { status: 500 })
     }
 }
 
-export async function POST(req:  NextRequest) {
+export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
@@ -20,23 +20,23 @@ export async function POST(req:  NextRequest) {
 
         if (!name) {
             return new NextResponse("Name is required", { status: 400 });
-          }
+        }
 
         const existingCategory = await prisma.category.findFirst({ where: { name } });
 
         if (existingCategory) {
-              return new NextResponse("Category already exists", { status: 409 });
+            return new NextResponse("Category already exists", { status: 409 });
         }
-    
+
         const category = await prisma.category.create({
             data: {
-             name
+                name
             },
-          });
-    
+        });
+
         return NextResponse.json(category)
     } catch (error) {
-        return new NextResponse('Internal error', {status: 500})
+        return new NextResponse('Internal error', { status: 500 })
     }
-    
+
 }
