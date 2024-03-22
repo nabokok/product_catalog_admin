@@ -23,7 +23,7 @@ interface Product {
   color: string;
   ram: string;
   year: number;
-  image: string;
+  images: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,7 +32,7 @@ interface Props {
   products: Product[];
 }
 
-const ProductsTable: React.FC<Props> = ({ products }) => {
+const TableProduct: React.FC<Props> = ({ products }) => {
   const [sortedProducts, setSortedProducts] = useState<Product[]>(products);
   const [sortBy, setSortBy] = useState<string>('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -87,7 +87,6 @@ const ProductsTable: React.FC<Props> = ({ products }) => {
             <TableCell style={{backgroundColor:'black', color:'white'}}>Screen</TableCell>
             <TableCell style={{backgroundColor:'black', color:'white'}}>Capacity</TableCell>
             <TableCell style={{backgroundColor:'black', color:'white'}}>Color</TableCell>
-            <TableCell style={{backgroundColor:'black', color:'white'}}>RAM</TableCell>
             <TableCell style={{backgroundColor:'black', color:'white'}}>Year</TableCell>
             <TableCell style={{backgroundColor:'black', color:'white'}}>Change item</TableCell>
           </TableRow>
@@ -102,7 +101,6 @@ const ProductsTable: React.FC<Props> = ({ products }) => {
               <TableCell>{product.screen}</TableCell>
               <TableCell>{product.capacity}</TableCell>
               <TableCell>{product.color}</TableCell>
-              <TableCell>{product.ram}</TableCell>
               <TableCell>{product.year}</TableCell>
               <TableCell>
               <Box sx={{ display: 'flex', flexDirection: 'column', boxSizing: 'border-box', gap: 1 }}>
@@ -130,4 +128,4 @@ const ProductsTable: React.FC<Props> = ({ products }) => {
   );
 }
 
-export default ProductsTable;
+export default TableProduct;
