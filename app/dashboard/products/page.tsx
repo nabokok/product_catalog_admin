@@ -1,120 +1,73 @@
 'use client'
 
-import * as React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import dayjs from 'dayjs';
-
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 import { ProductsFilters } from '@/components/dashboard/products/products-filters';
 import { ProductsTable } from '@/components/dashboard/products/products-table';
-import type { Customer } from '@/components/dashboard/products/products-table';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
-import { paths } from '@/constants/paths';
-import LoadingPage from '@/app/loading';
+import { Product } from '@prisma/client';
 
-const products = [
-  {
-    id: 'USR-010',
-    name: 'Alcides Antonio',
-    avatar: '/assets/avatar-10.png',
-    email: 'alcides.antonio@devias.io',
-    phone: '908-691-3242',
-    address: { city: 'Madrid', country: 'Spain', state: 'Comunidad de Madrid', street: '4158 Hedge Street' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-  {
-    id: 'USR-009',
-    name: 'Marcus Finn',
-    avatar: '/assets/avatar-9.png',
-    email: 'marcus.finn@devias.io',
-    phone: '415-907-2647',
-    address: { city: 'Carson City', country: 'USA', state: 'Nevada', street: '2188 Armbrester Drive' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-  {
-    id: 'USR-008',
-    name: 'Jie Yan',
-    avatar: '/assets/avatar-8.png',
-    email: 'jie.yan.song@devias.io',
-    phone: '770-635-2682',
-    address: { city: 'North Canton', country: 'USA', state: 'Ohio', street: '4894 Lakeland Park Drive' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-  {
-    id: 'USR-007',
-    name: 'Nasimiyu Danai',
-    avatar: '/assets/avatar-7.png',
-    email: 'nasimiyu.danai@devias.io',
-    phone: '801-301-7894',
-    address: { city: 'Salt Lake City', country: 'USA', state: 'Utah', street: '368 Lamberts Branch Road' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-  {
-    id: 'USR-006',
-    name: 'Iulia Albu',
-    avatar: '/assets/avatar-6.png',
-    email: 'iulia.albu@devias.io',
-    phone: '313-812-8947',
-    address: { city: 'Murray', country: 'USA', state: 'Utah', street: '3934 Wildrose Lane' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-  {
-    id: 'USR-005',
-    name: 'Fran Perez',
-    avatar: '/assets/avatar-5.png',
-    email: 'fran.perez@devias.io',
-    phone: '712-351-5711',
-    address: { city: 'Atlanta', country: 'USA', state: 'Georgia', street: '1865 Pleasant Hill Road' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
 
-  {
-    id: 'USR-004',
-    name: 'Penjani Inyene',
-    avatar: '/assets/avatar-4.png',
-    email: 'penjani.inyene@devias.io',
-    phone: '858-602-3409',
-    address: { city: 'Berkeley', country: 'USA', state: 'California', street: '317 Angus Road' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-  {
-    id: 'USR-003',
-    name: 'Carson Darrin',
-    avatar: '/assets/avatar-3.png',
-    email: 'carson.darrin@devias.io',
-    phone: '304-428-3097',
-    address: { city: 'Cleveland', country: 'USA', state: 'Ohio', street: '2849 Fulton Street' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-  {
-    id: 'USR-002',
-    name: 'Siegbert Gottfried',
-    avatar: '/assets/avatar-2.png',
-    email: 'siegbert.gottfried@devias.io',
-    phone: '702-661-1654',
-    address: { city: 'Los Angeles', country: 'USA', state: 'California', street: '1798 Hickory Ridge Drive' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-  {
-    id: 'USR-001',
-    name: 'Miron Vitold',
-    avatar: '/assets/avatar-1.png',
-    email: 'miron.vitold@devias.io',
-    phone: '972-333-4106',
-    address: { city: 'San Diego', country: 'USA', state: 'California', street: '75247' },
-    createdAt: dayjs().subtract(2, 'hours').toDate(),
-  },
-] satisfies Customer[];
+export interface ProductsFilter {
+  page: number,
+  perPage: number,
+}
+
+const productsFilterInitialState = { page: 0, perPage: 5 }
 
 export default function Page(): React.JSX.Element {
+  const [products, setProducts] = useState<{ productsList: Product[], count: number }>({
+    productsList: [],
+    count: 0
+  });
+  const [productsFilter, setProductsFilter] = useState<ProductsFilter>(productsFilterInitialState);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
-  const page = 0;
-  const rowsPerPage = 5;
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('/api/products', {
+        params: {
+          perPage: productsFilter.perPage,
+          page: productsFilter.page
+        }
+      });
+      setProducts({
+        productsList: response.data.productsPerPage,
+        count: response.data.productsCount
+      });
+    } catch (error) {
+      toast.error('Something went wrong.');
+    }
+  };
 
-  const paginatedProducts = applyPagination(products, page, rowsPerPage);
+  useEffect(() => {
+    fetchData();
+  }, [productsFilter]);
+
+  const handleFilter = (filter: Partial<ProductsFilter>) => {
+    setProductsFilter(prev => ({ ...prev, ...filter }));
+  }
+
+  const bulkDelete = async () => {
+    try {
+      await axios.delete('/api/products', { data: { ids: selectedProducts } });
+      fetchData();
+    } catch (error) {
+      toast.error('Something went wrong.');
+    }
+  }
+
+  const productDelete = async (id: string) => {
+    try {
+      await axios.delete(`/api/products/${id}`);
+      fetchData();
+    } catch (error) {
+      toast.error('Something went wrong.');
+    }
+  }
 
   return (
     <Stack spacing={3}>
@@ -122,23 +75,30 @@ export default function Page(): React.JSX.Element {
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Products</Typography>
         </Stack>
-        <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
+        <div style={{ display: 'flex', gap: 12 }}>
+          <Button variant="contained">
             Add
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            disabled={selectedProducts.length === 0}
+            onClick={bulkDelete}
+          >
+            Delete
           </Button>
         </div>
       </Stack>
       <ProductsFilters />
       <ProductsTable
-        count={paginatedProducts.length}
-        page={page}
-        rows={paginatedProducts}
-        rowsPerPage={rowsPerPage}
+        count={products.count}
+        page={productsFilter.page}
+        rows={products.productsList}
+        rowsPerPage={productsFilter.perPage}
+        onFilter={handleFilter}
+        setSelectedProducts={setSelectedProducts}
+        onDelete={productDelete}
       />
     </Stack>
   );
-}
-
-function applyPagination(rows: Customer[], page: number, rowsPerPage: number): Customer[] {
-  return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 }

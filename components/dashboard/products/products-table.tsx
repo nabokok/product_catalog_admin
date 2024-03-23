@@ -1,7 +1,6 @@
 'use client';
 
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
@@ -14,29 +13,23 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import dayjs from 'dayjs';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { useSelection } from '@/hooks/use-selection';
+import { Product } from '@prisma/client';
+import { ProductsFilter } from '@/app/dashboard/products/page';
+import { IconButton } from '@mui/material';
 
-function noop(): void {
-  // do nothing
-}
-
-export interface Customer {
-  id: string;
-  avatar: string;
-  name: string;
-  email: string;
-  address: { city: string; state: string; country: string; street: string };
-  phone: string;
-  createdAt: Date;
-}
 
 interface ProductsTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: Product[];
   rowsPerPage?: number;
+  onFilter: (filter: Partial<ProductsFilter>) => void;
+  setSelectedProducts: (selected: string[]) => void;
+  onDelete: (id: string) => void;
 }
 
 export function ProductsTable({
@@ -44,15 +37,43 @@ export function ProductsTable({
   rows = [],
   page = 0,
   rowsPerPage = 0,
+  onFilter,
+  setSelectedProducts,
+  onDelete
 }: ProductsTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
-    return rows.map((customer) => customer.id);
+    return rows.map((product) => product.id);
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
 
   const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
   const selectedAll = rows.length > 0 && selected?.size === rows.length;
+
+  useEffect(() => {
+    setSelectedProducts([...Array.from(selected)]);
+  }, [selected])
+
+  const handlePageChange = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => {
+    onFilter({ page });
+  }
+
+  const handlePerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onFilter({ perPage: parseInt(e.target.value, 10) })
+  }
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      selectAll();
+    } else {
+      deselectAll();
+    }
+  }
+
+  const handleProductEdit = (id: string) => {
+
+  }
+
 
   return (
     <Card>
@@ -64,20 +85,15 @@ export function ProductsTable({
                 <Checkbox
                   checked={selectedAll}
                   indeterminate={selectedSome}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      selectAll();
-                    } else {
-                      deselectAll();
-                    }
-                  }}
+                  onChange={handleCheckboxChange}
                 />
               </TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Signed Up</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Capacity</TableCell>
+              <TableCell>Color</TableCell>
+              <TableCell>Year</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,16 +116,23 @@ export function ProductsTable({
                   </TableCell>
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
                       <Typography variant="subtitle2">{row.name}</Typography>
                     </Stack>
                   </TableCell>
-                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.price}</TableCell>
+                  <TableCell>{row.capacity}</TableCell>
+                  <TableCell>{row.color}</TableCell>
+                  <TableCell>{row.year}</TableCell>
                   <TableCell>
-                    {row.address.city}, {row.address.state}, {row.address.country}
+                    <Box>
+                      <IconButton aria-label="delete" onClick={() => handleProductEdit(row.id)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton aria-label="delete" onClick={() => onDelete(row.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
                   </TableCell>
-                  <TableCell>{row.phone}</TableCell>
-                  <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
                 </TableRow>
               );
             })}
@@ -120,8 +143,8 @@ export function ProductsTable({
       <TablePagination
         component="div"
         count={count}
-        onPageChange={noop}
-        onRowsPerPageChange={noop}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handlePerPage}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}

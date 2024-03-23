@@ -2,18 +2,31 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+
+export async function GET(req: NextRequest) {
   try {
-    const products = await prisma.product.findMany()
-    return NextResponse.json(products)
+    const { searchParams } = new URL(req.url);
+    const page = Number(searchParams.get('page')) || 0;
+    const perPage = Number(searchParams.get('perPage')) || 5;
+    const skip = page * perPage;
+
+    const products = await prisma.$transaction([
+      prisma.product.findMany({
+        skip,
+        take: perPage
+      }),
+      prisma.product.count()
+    ]);
+    const [productsPerPage, productsCount] = products;
+    return NextResponse.json({ productsPerPage, productsCount });
   } catch (error) {
-    return new NextResponse('Internal error', { status: 500 })
+    return new NextResponse('Internal error', { status: 500 });
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
 
     const {
       name,
@@ -105,6 +118,23 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(product)
+  } catch (error) {
+    return new NextResponse('Internal error', { status: 500 })
+  }
+
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { ids } = await req.json();
+    await prisma.product.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+    return new NextResponse('Bulk deletion successful', { status: 200 });
   } catch (error) {
     return new NextResponse('Internal error', { status: 500 })
   }
