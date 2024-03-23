@@ -1,17 +1,19 @@
+'use client'
+
 import * as React from 'react';
-import type { Metadata } from 'next';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import dayjs from 'dayjs';
 
-import { config } from '@/config';
 import { ProductsFilters } from '@/components/dashboard/products/products-filters';
 import { ProductsTable } from '@/components/dashboard/products/products-table';
 import type { Customer } from '@/components/dashboard/products/products-table';
-
-export const metadata = { title: `Products | Dashboard | ${config.site.name}` } satisfies Metadata;
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { paths } from '@/constants/paths';
+import LoadingPage from '@/app/loading';
 
 const products = [
   {
@@ -108,6 +110,7 @@ const products = [
 ] satisfies Customer[];
 
 export default function Page(): React.JSX.Element {
+
   const page = 0;
   const rowsPerPage = 5;
 

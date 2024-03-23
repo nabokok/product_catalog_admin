@@ -1,40 +1,20 @@
-// import { redirect } from 'next/navigation';
+'use client'
 
-// export default function Page(): never {
-//   redirect('/dashboard/products');
-// }
-'use client';
-import { getUserSession } from '@/lib/session';
-import { Product } from '@prisma/client';
-import { useEffect, useState } from 'react';
-import ProductsTable from './components/ProductsTable';
-import TableProduct from './components/TableProduct';
+import { paths } from "@/constants/paths"
+import { useSession } from "next-auth/react"
+import { redirect } from "next/navigation"
 
 export default function Home() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect(paths.auth.signIn)
+    },
+  })
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('/api/products');
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
+  if (session) {
+    redirect(paths.dashboard.products)
+  }
 
-    fetchProducts();
-  }, []);
-
-  console.log(products);
-  return (
-    <main className="">
-      <ProductsTable products={products} />
-      <TableProduct products={products}/>
-    </main>
-  );
+  return null;
 }

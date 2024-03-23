@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { ArrowLeft as ArrowLeftIcon } from '@phosphor-icons/react/dist/ssr/ArrowLeft';
 
 import { config } from '@/config';
-import { paths } from '@/paths';
+import { paths } from '@/constants/paths';
 
 export const metadata = { title: `Not found | ${config.site.name}` } satisfies Metadata;
 

@@ -13,11 +13,27 @@ import { usePopover } from '@/hooks/use-popover';
 
 import { MobileNav } from './mobile-nav';
 import { UserPopover } from './user-popover';
+import { redirect } from 'next/navigation';
+import { paths } from '@/constants/paths';
+import { useSession } from 'next-auth/react';
+import LoadingPage from '@/app/loading';
+
 
 export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
 
   const userPopover = usePopover<HTMLDivElement>();
+
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect(paths.auth.signIn)
+    },
+  })
+
+  if (status === 'loading') {
+    return <LoadingPage />;
+  }
 
   return (
     <React.Fragment>

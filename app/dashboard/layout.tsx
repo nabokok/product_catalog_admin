@@ -3,17 +3,20 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
-import { AuthGuard } from '@/components/auth/auth-guard';
 import { MainNav } from '@/components/dashboard/layout/main-nav';
 import { SideNav } from '@/components/dashboard/layout/side-nav';
+import { config } from '@/config';
+import { Metadata } from 'next';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps): React.JSX.Element {
+export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
+
+export default async function Layout({ children }: LayoutProps) {
   return (
-    <AuthGuard>
+    <>
       <GlobalStyles
         styles={{
           body: {
@@ -45,6 +48,6 @@ export default function Layout({ children }: LayoutProps): React.JSX.Element {
           </main>
         </Box>
       </Box>
-    </AuthGuard>
+    </>
   );
 }
