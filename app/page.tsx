@@ -8,6 +8,7 @@ import { getUserSession } from '@/lib/session';
 import { Product } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import ProductsTable from './components/ProductsTable';
+import TableProduct from './components/TableProduct';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -33,6 +34,7 @@ export default function Home() {
   return (
     <main className="">
       <ProductsTable products={products} />
+      <TableProduct products={products}/>
     </main>
   );
 }

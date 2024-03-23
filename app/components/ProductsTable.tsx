@@ -35,6 +35,7 @@ const ProductsTable: React.FC<Props> = ({ products }) => {
       field: 'actions',
       headerName: 'Actions',
       width: 162,
+      sortable: false, filterable: false,
       renderCell: (params: any) => (
         <Box>
           <Button variant="contained" color="primary" sx={{ marginRight: 0.2 }} onClick={() => handleEdit(params.row.id)}>Edit</Button>
