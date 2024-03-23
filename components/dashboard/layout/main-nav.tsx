@@ -5,18 +5,15 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
 import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
-import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
-
 import { usePopover } from '@/hooks/use-popover';
-
 import { MobileNav } from './mobile-nav';
 import { UserPopover } from './user-popover';
 import { redirect } from 'next/navigation';
 import { paths } from '@/constants/paths';
 import { useSession } from 'next-auth/react';
 import LoadingPage from '@/app/loading';
+import PersonIcon from '@mui/icons-material/Person';
 
 
 export function MainNav(): React.JSX.Element {
@@ -24,7 +21,7 @@ export function MainNav(): React.JSX.Element {
 
   const userPopover = usePopover<HTMLDivElement>();
 
-  const { status } = useSession({
+  const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
       redirect(paths.auth.signIn)
@@ -61,19 +58,13 @@ export function MainNav(): React.JSX.Element {
             >
               <ListIcon />
             </IconButton>
-
-            <Tooltip title="Search">
-              <IconButton>
-                <MagnifyingGlassIcon />
-              </IconButton>
-            </Tooltip>
           </Stack>
 
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
-              src="/assets/avatar.png"
+              src={session?.user?.image || "/assets/avatar.jpeg"}
               sx={{ cursor: 'pointer' }}
             />
           </Stack>

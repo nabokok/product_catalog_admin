@@ -17,7 +17,6 @@ export interface NextAppDirEmotionCacheProviderProps {
   children: React.ReactNode;
 }
 
-// Adapted from https://github.com/garronej/tss-react/blob/main/src/next/appDir.tsx
 export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionCacheProviderProps): React.JSX.Element {
   const { options, CacheProvider = DefaultCacheProvider, children } = props;
 
