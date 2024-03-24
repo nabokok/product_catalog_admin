@@ -17,15 +17,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 import { useSelection } from '@/hooks/use-selection';
-import { Product } from '@prisma/client';
 import { ProductsFilter } from '@/app/dashboard/products/page';
 import { IconButton } from '@mui/material';
+
+import { paths } from '@/constants/paths';
+import { useRouter } from 'next/navigation';
+import { ProductWithCategory } from '@/types/ProductWithCategory';
 
 
 interface ProductsTableProps {
   count?: number;
   page?: number;
-  rows?: Product[];
+  rows?: ProductWithCategory[];
   rowsPerPage?: number;
   onFilter: (filter: Partial<ProductsFilter>) => void;
   setSelectedProducts: (selected: string[]) => void;
@@ -46,6 +49,8 @@ export function ProductsTable({
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
+
+  const router = useRouter();
 
   const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
   const selectedAll = rows.length > 0 && selected?.size === rows.length;
@@ -71,7 +76,7 @@ export function ProductsTable({
   }
 
   const handleProductEdit = (id: string) => {
-
+    router.push(`${paths.dashboard.products}/${id}`);
   }
 
 
@@ -89,6 +94,7 @@ export function ProductsTable({
                 />
               </TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>Category</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Capacity</TableCell>
               <TableCell>Color</TableCell>
@@ -119,13 +125,14 @@ export function ProductsTable({
                       <Typography variant="subtitle2">{row.name}</Typography>
                     </Stack>
                   </TableCell>
+                  <TableCell>{row.category.name}</TableCell>
                   <TableCell>{row.price}</TableCell>
                   <TableCell>{row.capacity}</TableCell>
                   <TableCell>{row.color}</TableCell>
                   <TableCell>{row.year}</TableCell>
                   <TableCell>
                     <Box>
-                      <IconButton aria-label="delete" onClick={() => handleProductEdit(row.id)}>
+                      <IconButton aria-label="edit" onClick={() => handleProductEdit(row.id)}>
                         <EditIcon />
                       </IconButton>
                       <IconButton aria-label="delete" onClick={() => onDelete(row.id)}>

@@ -20,7 +20,8 @@ export async function GET(req: NextRequest, { params }: { params: { productId: s
     const product = await prisma.product.findUnique({
       where: {
         id: params.productId
-      }
+      },
+      include: { category: true },
     });
 
     return NextResponse.json(product);

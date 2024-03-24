@@ -8,7 +8,9 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { ProductsFilters } from '@/components/dashboard/products/products-filters';
 import { ProductsTable } from '@/components/dashboard/products/products-table';
-import { Product } from '@prisma/client';
+import { ProductWithCategory } from '@/types/ProductWithCategory';
+import { paths } from '@/constants/paths';
+import { useRouter } from 'next/navigation';
 
 
 export interface ProductsFilter {
@@ -19,12 +21,14 @@ export interface ProductsFilter {
 const productsFilterInitialState = { page: 0, perPage: 5 }
 
 export default function Page(): React.JSX.Element {
-  const [products, setProducts] = useState<{ productsList: Product[], count: number }>({
+  const [products, setProducts] = useState<{ productsList: ProductWithCategory[], count: number }>({
     productsList: [],
     count: 0
   });
   const [productsFilter, setProductsFilter] = useState<ProductsFilter>(productsFilterInitialState);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+
+  const router = useRouter();
 
   const fetchData = async () => {
     try {
