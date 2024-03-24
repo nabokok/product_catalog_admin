@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Category } from "@prisma/client";
+import { Category, Product } from "@prisma/client";
 
 // const categorySchema = z.object({
 //     id: z.string(),
@@ -41,12 +41,12 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>
 
 export default function CreateProduct({ params }: { params: { productId: string } }) {
-    const [product, setProduct] = useState<ProductWithCategory>();
+    const [product, setProduct] = useState<Product & { category: string }>();
     const [categories, setCategories] = useState<Category[]>([]);
     const { control, handleSubmit, getValues, setValue, reset } = useForm<Schema>({
         resolver: zodResolver(schema),
-        defaultValues: product as ProductWithCategory,
-        values: product as ProductWithCategory,
+        defaultValues: product as Product & { category: string },
+        values: product as Product & { category: string },
     });
 
     const onSubmit = (data: Schema) => {

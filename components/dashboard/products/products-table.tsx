@@ -17,7 +17,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 import { useSelection } from '@/hooks/use-selection';
-import { Category, Product } from '@prisma/client';
 import { ProductsFilter } from '@/app/dashboard/products/page';
 import { IconButton } from '@mui/material';
 
