@@ -1,5 +1,8 @@
+'use client';
+
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { signIn } from "next-auth/react"
 
 
 export default function LoginPage() {
@@ -11,10 +14,20 @@ export default function LoginPage() {
                         <h1 className="text-3xl font-bold">Login</h1>
                     </div>
                     <div className="grid gap-4">
-                        <Button type="submit" className="w-full">
+                        <Button
+                            className="w-full"
+                            onClick={(e) => {
+                                e.preventDefault()
+                                signIn('github', { callbackUrl: '/dashboard' })
+                            }}
+                        >
                             Login with GitHub
                         </Button>
-                        <Button variant="outline" className="w-full">
+                        <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+                        >
                             Login with Google
                         </Button>
                     </div>

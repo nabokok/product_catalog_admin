@@ -1,9 +1,19 @@
+'use client'
 
+import { useSession } from "next-auth/react"
+import { redirect } from "next/navigation"
 
 export default function Home() {
-  return (
-    <main >
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect('/login')
+    },
+  })
 
-    </main>
-  );
+  if (session) {
+    redirect('/dashboard')
+  }
+
+  return null;
 }
