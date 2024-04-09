@@ -11,11 +11,12 @@ export default function DashboardPage() {
         },
     });
 
+
+
     if (status === 'loading') {
         return 'loading...'
     }
-
     return (
         <h1>Dashboard</h1>
-    );
+    )
 }

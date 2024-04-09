@@ -6,9 +6,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const page = Number(searchParams.get('page')) || 0;
+    const page = Number(searchParams.get('page')) || 1;
     const perPage = Number(searchParams.get('perPage')) || 5;
-    const skip = page * perPage;
+    const skip = (page - 1) * perPage;
 
     const products = await prisma.$transaction([
       prisma.product.findMany({
